@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations, useLocale } from "@/lib/i18n";
 import { Github, Menu, X, Sun, Moon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { buildLocaleHref, buildSectionHref, switchLocaleHref } from "@/lib/internal-href";
 
 const NAV_ITEMS = [
   { key: "timeline", href: "/timeline" },
@@ -24,14 +24,21 @@ export function Header() {
   const pathname = usePathname();
   const locale = useLocale();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dark, setDark] = useState(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("theme");
-      if (stored) return stored === "dark";
-      return window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
-    return false;
-  });
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const syncDark = () => {
+      setDark(html.classList.contains("dark"));
+    };
+
+    syncDark();
+
+    const observer = new MutationObserver(syncDark);
+    observer.observe(html, { attributes: true, attributeFilter: ["class"] });
+
+    return () => observer.disconnect();
+  }, []);
 
   function toggleDark() {
     const next = !dark;
@@ -40,24 +47,23 @@ export function Header() {
     localStorage.setItem("theme", next ? "dark" : "light");
   }
 
-  function switchLocale(newLocale: string) {
-    const newPath = pathname.replace(`/${locale}`, `/${newLocale}`);
-    window.location.href = newPath;
+  function getLocaleHref(newLocale: string) {
+    return switchLocaleHref(pathname, locale, newLocale);
   }
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-bg)]/80 backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href={`/${locale}`} className="text-lg font-bold">
+        <a href={buildLocaleHref(locale)} className="text-lg font-bold">
           Learn Claude Code
-        </Link>
+        </a>
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-6 md:flex">
           {NAV_ITEMS.map((item) => (
-            <Link
+            <a
               key={item.key}
-              href={`/${locale}${item.href}`}
+              href={buildSectionHref(locale, item.href.slice(1))}
               className={cn(
                 "text-sm font-medium transition-colors hover:text-zinc-900 dark:hover:text-white",
                 pathname.includes(item.href)
@@ -66,15 +72,16 @@ export function Header() {
               )}
             >
               {t(item.key)}
-            </Link>
+            </a>
           ))}
 
           {/* Locale switcher */}
           <div className="flex items-center gap-1 rounded-lg border border-[var(--color-border)] p-0.5">
             {LOCALES.map((l) => (
-              <button
+              <a
                 key={l.code}
-                onClick={() => switchLocale(l.code)}
+                href={getLocaleHref(l.code)}
+                aria-current={locale === l.code ? "page" : undefined}
                 className={cn(
                   "rounded-md px-2 py-1 text-xs font-medium transition-colors",
                   locale === l.code
@@ -83,7 +90,7 @@ export function Header() {
                 )}
               >
                 {l.label}
-              </button>
+              </a>
             ))}
           </div>
 
@@ -117,21 +124,23 @@ export function Header() {
       {mobileOpen && (
         <div className="border-t border-[var(--color-border)] bg-[var(--color-bg)] p-4 md:hidden">
           {NAV_ITEMS.map((item) => (
-            <Link
+            <a
               key={item.key}
-              href={`/${locale}${item.href}`}
+              href={buildSectionHref(locale, item.href.slice(1))}
               className="flex min-h-[44px] items-center text-sm"
               onClick={() => setMobileOpen(false)}
             >
               {t(item.key)}
-            </Link>
+            </a>
           ))}
           <div className="mt-3 flex items-center justify-between border-t border-[var(--color-border)] pt-3">
             <div className="flex gap-2">
               {LOCALES.map((l) => (
-                <button
+                <a
                   key={l.code}
-                  onClick={() => switchLocale(l.code)}
+                  href={getLocaleHref(l.code)}
+                  onClick={() => setMobileOpen(false)}
+                  aria-current={locale === l.code ? "page" : undefined}
                   className={cn(
                     "min-h-[44px] min-w-[44px] rounded-md px-3 text-xs font-medium",
                     locale === l.code
@@ -140,7 +149,7 @@ export function Header() {
                   )}
                 >
                   {l.label}
-                </button>
+                </a>
               ))}
             </div>
             <div className="flex items-center gap-2">

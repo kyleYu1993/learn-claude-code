@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LAYERS, VERSION_META } from "@/lib/constants";
 import { useTranslations } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { buildVersionHref } from "@/lib/internal-href";
 
 const LAYER_DOT_BG: Record<string, string> = {
   tools: "bg-blue-500",
@@ -42,8 +42,8 @@ export function Sidebar() {
 
                 return (
                   <li key={vId}>
-                    <Link
-                      href={href}
+                    <a
+                      href={buildVersionHref(locale, vId)}
                       className={cn(
                         "block rounded-md px-2.5 py-1.5 text-sm transition-colors",
                         isActive
@@ -53,7 +53,7 @@ export function Sidebar() {
                     >
                       <span className="font-mono text-xs">{vId}</span>
                       <span className="ml-1.5">{t(vId) || meta?.title}</span>
-                    </Link>
+                    </a>
                   </li>
                 );
               })}

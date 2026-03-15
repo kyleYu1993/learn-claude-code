@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { LEARNING_PATH, VERSION_META, LAYERS } from "@/lib/constants";
 import { LayerBadge } from "@/components/ui/badge";
 import versionsData from "@/data/generated/versions.json";
 import { VersionDetailClient } from "./client";
 import { getTranslations } from "@/lib/i18n-server";
+import { buildVersionHref } from "@/lib/internal-href";
 
 export function generateStaticParams() {
   return LEARNING_PATH.map((version) => ({ version }));
@@ -84,8 +84,8 @@ export default async function VersionPage({
       {/* Prev / Next navigation */}
       <nav className="flex items-center justify-between border-t border-zinc-200 pt-6 dark:border-zinc-700">
         {prevVersion ? (
-          <Link
-            href={`/${locale}/${prevVersion}`}
+          <a
+            href={buildVersionHref(locale, prevVersion)}
             className="group flex items-center gap-2 text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-white"
           >
             <span className="transition-transform group-hover:-translate-x-1">
@@ -97,13 +97,13 @@ export default async function VersionPage({
                 {prevVersion} - {tSession(prevVersion) || VERSION_META[prevVersion]?.title}
               </div>
             </div>
-          </Link>
+          </a>
         ) : (
           <div />
         )}
         {nextVersion ? (
-          <Link
-            href={`/${locale}/${nextVersion}`}
+          <a
+            href={buildVersionHref(locale, nextVersion)}
             className="group flex items-center gap-2 text-right text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-white"
           >
             <div>
@@ -115,7 +115,7 @@ export default async function VersionPage({
             <span className="transition-transform group-hover:translate-x-1">
               &rarr;
             </span>
-          </Link>
+          </a>
         ) : (
           <div />
         )}

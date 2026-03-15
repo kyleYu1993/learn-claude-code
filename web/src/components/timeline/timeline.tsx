@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslations, useLocale } from "@/lib/i18n";
 import { LEARNING_PATH, VERSION_META, LAYERS } from "@/lib/constants";
 import { LayerBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import versionsData from "@/data/generated/versions.json";
+import { buildVersionHref } from "@/lib/internal-href";
 
 const LAYER_DOT_BG: Record<string, string> = {
   tools: "bg-blue-500",
@@ -154,13 +154,13 @@ export function Timeline() {
                   )}
 
                   {/* Link */}
-                  <Link
-                    href={`/${locale}/${versionId}`}
+                  <a
+                    href={buildVersionHref(locale, versionId)}
                     className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-zinc-900 hover:underline dark:text-zinc-100"
                   >
                     {t("learn_more")}
                     <span aria-hidden="true">&rarr;</span>
-                  </Link>
+                  </a>
                 </motion.div>
               </div>
             </div>

@@ -6,6 +6,12 @@ First, run the development server:
 
 ```bash
 npm run dev
+
+powershell
+
+Set-Location "E:\project\learn-claude-code\learn-claude-code\web"
+$env:NEXT_PUBLIC_BASE_PATH="/claude"
+npm run build
 # or
 yarn dev
 # or

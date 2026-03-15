@@ -1,15 +1,15 @@
 "use client";
 
 import { useMemo } from "react";
-import Link from "next/link";
 import { useLocale } from "@/lib/i18n";
 import { VERSION_META } from "@/lib/constants";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { LayerBadge } from "@/components/ui/badge";
 import { CodeDiff } from "@/components/diff/code-diff";
-import { ArrowLeft, Plus, Minus, FileCode, Wrench, Box, FunctionSquare } from "lucide-react";
-import type { AgentVersion, VersionDiff, VersionIndex } from "@/types/agent-data";
+import { ArrowLeft, FileCode, Wrench, Box, FunctionSquare } from "lucide-react";
+import type { VersionIndex } from "@/types/agent-data";
 import versionData from "@/data/generated/versions.json";
+import { buildSectionHref, buildVersionHref } from "@/lib/internal-href";
 
 const data = versionData as VersionIndex;
 
@@ -33,9 +33,9 @@ export function DiffPageContent({ version }: DiffPageContentProps) {
     return (
       <div className="py-12 text-center">
         <p className="text-zinc-500">Version not found.</p>
-        <Link href={`/${locale}/timeline`} className="mt-4 inline-block text-sm text-blue-600 hover:underline">
+        <a href={buildSectionHref(locale, "timeline")} className="mt-4 inline-block text-sm text-blue-600 hover:underline">
           Back to timeline
-        </Link>
+        </a>
       </div>
     );
   }
@@ -43,13 +43,13 @@ export function DiffPageContent({ version }: DiffPageContentProps) {
   if (!prevVersion || !diff) {
     return (
       <div className="py-12">
-        <Link
-          href={`/${locale}/${version}`}
+        <a
+          href={buildVersionHref(locale, version)}
           className="mb-6 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
         >
           <ArrowLeft size={14} />
           Back to {meta.title}
-        </Link>
+        </a>
         <h1 className="text-3xl font-bold">{meta.title}</h1>
         <p className="mt-4 text-zinc-500">
           This is the first version -- there is no previous version to compare against.
@@ -62,13 +62,13 @@ export function DiffPageContent({ version }: DiffPageContentProps) {
 
   return (
     <div className="py-4">
-      <Link
-        href={`/${locale}/${version}`}
+      <a
+        href={buildVersionHref(locale, version)}
         className="mb-6 inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
       >
         <ArrowLeft size={14} />
         Back to {meta.title}
-      </Link>
+      </a>
 
       {/* Header */}
       <div className="mb-8">

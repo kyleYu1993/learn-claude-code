@@ -1,14 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { useTranslations, useLocale } from "@/lib/i18n";
 import { LAYERS, VERSION_META } from "@/lib/constants";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { LayerBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import type { VersionIndex } from "@/types/agent-data";
 import versionData from "@/data/generated/versions.json";
+import { buildVersionHref } from "@/lib/internal-href";
 
 const data = versionData as VersionIndex;
 
@@ -75,9 +75,9 @@ export default function LayersPage() {
               <div className="border-t border-zinc-200 bg-zinc-50/50 px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900/50">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {versionInfos.map(({ id, info, meta }) => (
-                    <Link
+                    <a
                       key={id}
-                      href={`/${locale}/${id}`}
+                      href={buildVersionHref(locale, id)}
                       className="group"
                     >
                       <Card className="transition-shadow hover:shadow-md">
@@ -111,7 +111,7 @@ export default function LayersPage() {
                           </p>
                         )}
                       </Card>
-                    </Link>
+                    </a>
                   ))}
                 </div>
               </div>
