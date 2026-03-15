@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
-const basePath = (process.env.NEXT_PUBLIC_BASE_PATH || "").replace(/\/$/, "");
+const rawBasePath = (process.env.NEXT_PUBLIC_BASE_PATH || "").trim();
+
+const basePath =
+  !rawBasePath || rawBasePath.toLowerCase() === "null"
+    ? ""
+    : `/${rawBasePath.replace(/^\/+|\/+$/g, "")}`;
 
 const nextConfig: NextConfig = {
   basePath,

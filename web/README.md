@@ -1,42 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is the web frontend for the project, built with [Next.js](https://nextjs.org).
 
-## Getting Started
+## Base path configuration
 
-First, run the development server:
+The project reads `NEXT_PUBLIC_BASE_PATH` from `web/.env.production` during build.
 
-```bash
-npm run dev
+### Root deployment
 
-powershell
+If the site is deployed at the domain root, leave it empty:
 
-Set-Location "E:\project\learn-claude-code\learn-claude-code\web"
-$env:NEXT_PUBLIC_BASE_PATH="/claude"
-npm run build
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```dotenv
+NEXT_PUBLIC_BASE_PATH=
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+You can also write `null`, which is treated the same as empty.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Subpath deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+If the site is deployed under a subdirectory such as `/claude`, set:
 
-## Learn More
+```dotenv
+NEXT_PUBLIC_BASE_PATH=/claude
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Build
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+From `web/` run:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```powershell
+Set-Location "E:\project\learn-claude-code\learn-claude-code\web"
+npm run build
+```
 
-## Deploy on Vercel
+The static export output is written to `web/out`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Local development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```powershell
+Set-Location "E:\project\learn-claude-code\learn-claude-code\web"
+npm run dev
+```
+
+Then open:
+
+```text
+http://localhost:3000
+```
+
+## Local override without committing changes
+
+If you want to test a different path on your own machine, create `web/.env.production.local`.
+This file is ignored by Git and will override `web/.env.production`.
+
+Example:
+
+```dotenv
+NEXT_PUBLIC_BASE_PATH=/claude
+```
+
+## Notes
+
+- Empty or `null` means root deployment.
+- A value like `/claude` means subpath deployment.
+- Trailing slashes are normalized automatically.
+- Internal links are generated from the same base-path setting, so the built site stays consistent.
